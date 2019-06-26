@@ -1,0 +1,15 @@
+{
+    "safety_surface": {
+        "type": "circle",
+        "center": [75.48, 29.71, -200],
+        "radius": 100
+    },
+    "fov": 84,
+    "photo_num": 100,
+    "round_num": 4,
+    "output_mesh_path_1": "./assets/explore-model/explore-model.obj",
+    "input_mesh_path": "./assets/explore-model/explore-model.obj",
+    "output_mesh_path_2": "./assets/exploit-model/exploit-model.obj",
+    "image_dir_1": "./assets/dete-explore-img/photo-100-round-4/",
+    "image_dir_2": "./assets/exploit-img/"
+}b
