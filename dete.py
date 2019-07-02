@@ -107,7 +107,7 @@ class DETE(ReconstructionNavigator):
             self.explore_point(triangle.pc, triangle, center.pc, os.path.join(img_dir, '%d.png' % photo_counter))
 
     def explore_point(self, p, parent_triangle, center_pc, img_path):
-        print("Prapare to explore (%f, %f, %f)" % (p.x, p.y, p.z))
+        print("Prepare to explore (%f, %f, %f)" % (p.x, p.y, p.z))
         extra_height = 80
         self._move_to(p.vec3)
         p.h = self._drop_till_obstacle_detected()
