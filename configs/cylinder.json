@@ -1,0 +1,15 @@
+{
+	"type": "offline",
+    "safety_surface": {
+        "type": "cylinder",
+        "top_center": [75.48, 29.71, -200],
+		"bottom": [75.48, 29.71, -10],
+        "radius": 100
+		"start_pitch", -45
+		"end_pitch", 45
+    },
+    "fov": 84,
+    "point_num": 100,
+    "image_dir": "../assets/cylinder/photo-100/",
+	"round_num": 1
+}

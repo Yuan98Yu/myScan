@@ -6,7 +6,7 @@
         "radius": 100
     },
     "fov": 84,
-    "point_num": 100,
-    "image_dir": "../assets/circle/photo-100/",
+	"point_num": 100,
+    "image_dir": "./assets/circle/photo-100/",
 	"round_num": 4
 }

@@ -1,0 +1,10 @@
+# pycharm
+.idea
+.vscode
+
+# output
+assets/
+
+# tmp
+tmp_src/
+
