@@ -99,7 +99,7 @@ class DETE(ReconstructionNavigator):
         DETE.show_explore_path(root)
         center = root
         triangles = root.dfs()
-        # all_points = [center.pc, center.childs[0].p2]
+        # all_points = [center.pc, center.childs[0].p2]       
         print("Center point, counter=1")
         self.explore_point(center.pc, center, center.pc, os.path.join(img_dir, "1.png"))
         print("Edge point, counter=2")
@@ -110,6 +110,7 @@ class DETE(ReconstructionNavigator):
             center.pc,
             os.path.join(img_dir, "2.png"),
         )
+        # Iteration: dividing triangles
         for triangle in triangles:
             if triangle.parent.is_root:
                 # all_points.extend([triangle.p3, triangle.pc])
@@ -131,6 +132,15 @@ class DETE(ReconstructionNavigator):
             )
 
     def explore_point(self, p, parent_triangle, center_pc, img_path):
+        """Move to position located by p and take photos. 
+        Camera orientation is determined by parent_triangle's coordinate.
+
+        Args:
+            p: Point to be explored
+            parent_triangle: Triangle surrounds p
+            center_pc: the centre of place of interest
+            img_path: str --- image output path
+        """
         print("Prepare to explore (%f, %f, %f)" % (p.x, p.y, p.z))
         extra_height = 80
         self._move_to(p.vec3)
@@ -182,6 +192,10 @@ class DETE(ReconstructionNavigator):
         pass
 
     def generate_explore_views(self):
+        """Generate views to be explored()
+        
+        Returns: Triangle --- which childs are first division of place of interest
+        """
         center_point = self._safety_surface["center"]
         radius = self._safety_surface["radius"]
         point_num = self._config["point_num"]

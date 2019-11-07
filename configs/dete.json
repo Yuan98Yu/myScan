@@ -1,12 +1,12 @@
 {
-	"type": "dete_circle_binary",
+	"type": "dete",
     "safety_surface": {
         "type": "circle",
         "center": [75.48, 29.71, -200],
         "radius": 100
     },
-    "fov": 84,
-	"circle_num": 4,
+	"fov": 84,
     "point_num": 100,
-    "image_dir": "../assets/dete-circle-binary/photo-100/"
+    "image_dir": "./assets/dete/photo-100/",
+	"round_num": 4
 }

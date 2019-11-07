@@ -10,15 +10,15 @@ from utils import is_poi_within_poly, vector_to_yaw_and_pitch, point2list
 
 class DeteCircle(DETE):
     def explore(self):
-        """Explore the place of interest from  the outer circle to the inner circle"""
+        """Explore the place of interest from the outer circle to the inner circle"""
         if not self._safety_surface["type"] == "circle":
             return
         img_dir = self._config["image_dir"]
-        # Arm and takeoff
+        # Arm and take off
         self._uav.armDisarm(True)
         self._uav.takeoffAsync().join()
         self._move_to(Vector3r(0, 0, -60))
-        # Explore center point and points on edge
+        # Explore center point
         points_per_round = self.generate_explore_views()
         self.show_explore_path(points_per_round)
         center = points_per_round[0][0]
@@ -28,6 +28,7 @@ class DeteCircle(DETE):
         self.explore_point(
             center, root_triangle, root_triangle.pc, os.path.join(img_dir, "1.png")
         )
+        # Explore the outer circle
         for point in points_per_round[-1]:
             photo_counter += 1
             print(
@@ -40,7 +41,7 @@ class DeteCircle(DETE):
                 root_triangle.pc,
                 os.path.join(img_dir, "%d.png") % photo_counter,
             )
-        # Explore other points
+        # Explore other points from the outer circle to the inner circle
         for i in range(len(points_per_round) - 2, 0, -1):
             for point in points_per_round[i]:
                 photo_counter += 1
@@ -56,35 +57,38 @@ class DeteCircle(DETE):
                 )
 
     def generate_explore_views(self):
+        """Generate points on concentric circles.
+        The number of points is given by self._config, the number of round is calculated with point_number
+        """
         # read config from json
         center_point = self._safety_surface["center"]
         radius = self._safety_surface["radius"]
-        photo_num = self._config["photo_num"]
-        # function's output: points_per_round
+        point_number = self._config["point_number"]
+        # declare function's output: points_per_round
         points_per_round = list()
         points_per_round.append(
             [Point(center_point[0], center_point[1], center_point[2])]
         )
-        # calculate round_num from photo_num, radius
-        round_num = sympy.Symbol("round_num")
+        # calculate circle_num from point_number
+        circle_num = sympy.Symbol("circle_num")
         num_list = sympy.solve(
-            math.pi * (1 + round_num) * (round_num) - photo_num, round_num
+            math.pi * (1 + circle_num) * (circle_num) - point_number, circle_num
         )
         for value in num_list:
             if value > 0:
-                round_num = int(math.ceil(value))
-                print("round_num: %d" % round_num)
+                circle_num = int(math.ceil(value))
+                print("circle_num: %d" % circle_num)
                 break
-        # calculate points_num_per_round from radius, photo_num, round_num
+        # calculate points_num_per_round from radius, point_number, circle_num
         points_num_per_round = [1]
         total_points_num = 1
-        for i in range(1, round_num + 1):
+        for i in range(1, circle_num + 1):
             points_num_per_round.append(int(math.ceil(2 * math.pi * i)))
             total_points_num += points_num_per_round[i]
         print("total: points_num: %d" % total_points_num)
         # generate points' coordinate for per round
-        for i in range(1, round_num + 1):
-            tmp_radius = radius * i / round_num
+        for i in range(1, circle_num + 1):
+            tmp_radius = radius * i / circle_num
             delta_theta = 2 * math.pi / points_num_per_round[i]
             tmp_list = list()
             for num in range(points_num_per_round[i]):
@@ -100,6 +104,7 @@ class DeteCircle(DETE):
         return points_per_round
 
     def explore_point(self, p, parent_triangle, center_pc, img_path):
+        """minor change to DETE.explore_point(...)"""
         print("Prepare to explore (%f, %f, %f)" % (p.x, p.y, p.z))
         extra_height = 80
         self._move_to(p.vec3)
@@ -140,9 +145,9 @@ class DeteCircle(DETE):
     @staticmethod
     def __generate_smallest_triangle(point, center, points_list):
         """ get the three vertices(from points have been explored) of 
-        the smallest triangle that surrouding the specified point. 
-        
-        point is a list of [x,y,z], but only use [x,y] in this function
+        the smallest triangle that surrouding the specified point.         
+        Point is a list of [x,y,z], but only use [x,y] in this function.
+
         Args:
             point: Point  the point to be surrounded
             center: Point  the fixed point of the triangle
@@ -180,6 +185,7 @@ class DeteCircle(DETE):
 
 if __name__ == "__main__":
     from utils import get_config_from_file
+
     print("start test".center(100, "*"))
     dete = DeteCircle(get_config_from_file("../configs/dete_circle.json"))
     dete.explore()

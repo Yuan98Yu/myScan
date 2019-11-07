@@ -5,8 +5,6 @@
         "center": [75.48, 29.71, -200],
         "radius": 100
     },
-    "fov": 84,
     "point_num": 100,
-    "image_dir": "../assets/circle/photo-100/",
-	"round_num": 4
+    "image_dir": "./assets/circle/photo-100/"
 }
