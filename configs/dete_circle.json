@@ -7,5 +7,5 @@
     },
     "fov": 84,
     "point_num": 100,
-    "image_dir": "../assets/dete-circle/photo-100/"
+    "image_dir": "./assets/dete-circle/photo-100/"
 }

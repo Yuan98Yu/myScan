@@ -99,7 +99,7 @@ class DETE(ReconstructionNavigator):
         DETE.show_explore_path(root)
         center = root
         triangles = root.dfs()
-        # all_points = [center.pc, center.childs[0].p2]       
+        # all_points = [center.pc, center.childs[0].p2]
         print("Center point, counter=1")
         self.explore_point(center.pc, center, center.pc, os.path.join(img_dir, "1.png"))
         print("Edge point, counter=2")

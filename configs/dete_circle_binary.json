@@ -8,5 +8,5 @@
     "fov": 84,
 	"circle_num": 4,
     "point_num": 100,
-    "image_dir": "../assets/dete-circle-binary/photo-100/"
+    "image_dir": "./assets/dete-circle-binary/photo-100/"
 }

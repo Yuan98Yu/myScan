@@ -58,28 +58,28 @@ class DeteCircle(DETE):
 
     def generate_explore_views(self):
         """Generate points on concentric circles.
-        The number of points is given by self._config, the number of round is calculated with point_number
+        The number of points is given by self._config, the number of round is calculated with point_num
         """
         # read config from json
         center_point = self._safety_surface["center"]
         radius = self._safety_surface["radius"]
-        point_number = self._config["point_number"]
+        point_num = self._config["point_num"]
         # declare function's output: points_per_round
         points_per_round = list()
         points_per_round.append(
             [Point(center_point[0], center_point[1], center_point[2])]
         )
-        # calculate circle_num from point_number
+        # calculate circle_num from point_num
         circle_num = sympy.Symbol("circle_num")
         num_list = sympy.solve(
-            math.pi * (1 + circle_num) * (circle_num) - point_number, circle_num
+            math.pi * (1 + circle_num) * (circle_num) - point_num, circle_num
         )
         for value in num_list:
             if value > 0:
                 circle_num = int(math.ceil(value))
                 print("circle_num: %d" % circle_num)
                 break
-        # calculate points_num_per_round from radius, point_number, circle_num
+        # calculate points_num_per_round from radius, point_num, circle_num
         points_num_per_round = [1]
         total_points_num = 1
         for i in range(1, circle_num + 1):
@@ -134,7 +134,7 @@ class DeteCircle(DETE):
                 parent_triangle.p3.y,
                 parent_triangle.p3.h,
             ]
-            camera = DETE.cal_camera(
+            camera = DeteCircle.cal_camera(
                 [p.x, p.y, p.h], obstacle_p1, obstacle_p2, obstacle_p3
             )
 

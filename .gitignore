@@ -4,7 +4,9 @@
 
 # output
 assets/
+*.png
 
 # tmp
 tmp_src/
+*.pdf
 

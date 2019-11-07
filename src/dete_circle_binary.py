@@ -11,7 +11,7 @@ from utils import (
     point2list,
     is_poi_within_poly,
     is_ray_intersects_segment,
-    vector_to_yaw_and_pitch,
+    vector_to_yaw_and_pitch
 )
 
 
@@ -56,12 +56,14 @@ class DeteCircleBinary(DeteCircle):
                 os.path.join(img_dir, "%d.png" % point_counter),
             )
 
-        """0 1 2 3 4,2在0和4中间,1在0和2中间3在2和4中间"""
+        """Explore circle 2, 1, 3 successively"""
         point_counter = self.between(0, 4, points_per_round, 2, point_counter, img_dir)
         point_counter = self.between(0, 2, points_per_round, 1, point_counter, img_dir)
         point_counter = self.between(2, 4, points_per_round, 3, point_counter, img_dir)
 
-    def between(self, inside, outside, points_per_round, middle, point_counter, img_dir):
+    def between(
+        self, inside, outside, points_per_round, middle, point_counter, img_dir
+    ):
         """Traverse the middle circle. Camera orientation are determined by the inside and outside circle.
 
         Args:
@@ -94,6 +96,56 @@ class DeteCircleBinary(DeteCircle):
                 os.path.join(img_dir, "%d.png" % point_counter),
             )
         return point_counter
+
+    def explore_point(self, p, parent_triangle, center_pc, img_path):
+        """minor change to DeteCircle.explore_point(...)
+        Diffent from DeteCircle which only take one photo at every point,
+        here UAV could take at most three photos per point.
+        """
+        print("Prepare to explore (%f, %f, %f)" % (p.x, p.y, p.z))
+        extra_height = 80
+        self._move_to(p.vec3)
+        print("p.h: %f" % p.h)
+        p.h = self._drop_till_obstacle_detected()
+        print("The highest obstacle's height is %f" % p.h)
+        if parent_triangle.is_root:
+            camera = vector_to_yaw_and_pitch([0, 0, 1])
+            camera.update({"position": [p.x, p.y, p.h - extra_height]})
+        else:
+            print(
+                "Height of parent triangle: %f, %f, %f"
+                % (parent_triangle.p1.h, parent_triangle.p2.h, parent_triangle.p3.h)
+            )
+            obstacle_p1 = [
+                parent_triangle.p1.x,
+                parent_triangle.p1.y,
+                parent_triangle.p1.h,
+            ]
+            obstacle_p2 = [
+                parent_triangle.p2.x,
+                parent_triangle.p2.y,
+                parent_triangle.p2.h,
+            ]
+            obstacle_p3 = [
+                parent_triangle.p3.x,
+                parent_triangle.p3.y,
+                parent_triangle.p3.h,
+            ]
+            camera = DeteCircleBinary.cal_camera(
+                [p.x, p.y, p.h], obstacle_p1, obstacle_p2, obstacle_p3
+            )
+        self._observe_at_view(camera, img_path)
+        if -p.h < extra_height:
+            print("explore extra pictures:")
+            camera_1 = {"pitch": camera["pitch"], "yaw": math.pi + camera["yaw"]}
+            camera_1.update({"position": [p.x, p.y, (p.h - extra_height + p.z) / 2]})
+            # print("extra_path_1:%s" % "%s_%d.png" % (img_path[:-4], 1))
+            self._observe_at_view(camera_1, "%s_%d.png" % (img_path[:-4], 1))
+            camera_2 = vector_to_yaw_and_pitch([0, 0, 1])
+            camera_2.update({"position": [p.x, p.y, p.z]})
+            self._observe_at_view(camera_2, "%s_%d.png" % (img_path[:-4], 2))
+        self._move_to(p.vec3)
+        print("\n")
 
     def generate_explore_views(self):
         """Minor change to DeteCircle.generate_explore_views(). 
